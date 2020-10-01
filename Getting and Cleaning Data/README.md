@@ -1,16 +1,80 @@
+---
+title: "Analysis of the mtcars Dataset"
+author: "Galang Reformantoko"
+date: "01.10.2020"
+output:
+  slidy_presentation: default
+  html_document:
+    number_sections: yes
+    toc: yes
+  ioslides_presentation: default
+mode: selfcontained
+job: Reproducible Pitch Presentation
+subtitle: Variables and MPG
+highlighter: highlight.js
+widgets: bootstrap
+---
 
-Getting and Cleaning Data - Course Project
-==========================================
+## Coursera Reproducible Pitch
 
-* This is the course project for the Getting and Cleaning Data Coursera course.
-* The included R script, `run_analysis.R`, conducts the following:
+### See the Regression Models Course Project  
 
+- URL: *https://github.com/manastiwari/Developing-Data-Products-Week-4-Course-Project*
+- Find here all the data that have been use for this presentation and also for the first part of the data Science Project: "First, you will create a Shiny application and deploy it on Rstudio's servers.Second, you will use Slidify or Rstudio Presenter to prepare a reproducible pitch presentation about your application."
 
-1. Download the dataset from web if it does not already exist in the working directory.
-2. Read both the train and test datasets and merge them into x(measurements), y(activity) and subject, respectively.
-3. Load the data(x's) feature, activity info and extract columns named 'mean'(`-mean`) and 'standard'(`-std`).
-   Also, modify column names to descriptive. (`-mean` to `Mean`, `-std` to `Std`, and remove symbols like `-`, `(`, `)`)
-4. Extract data by selected columns(from step 3), and merge x, y(activity) and subject data.
-   Also, replace y(activity) column to it's name by refering activity label (loaded step 3).
-5. Generate 'Tidy Dataset' that consists of the average (mean) of each variable for each subject and each activity.
-   The result is shown in the file `tidy_dataset.txt`.
+### Find all details here
+URL: *https://www.coursera.org/learn/data-products/peer/tMYrn/course-project-shiny-application-and-reproducible-pitch*
+
+---
+
+## mtcars Dataset
+
+### Motor Trend Car Road Tests
+
+> The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973-74 models).
+### Source
+> Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391-411.
+```{r}
+library(datasets)
+head(mtcars, 3)
+```
+---
+
+## mtcars Dataset - Format
+
+**A data frame with 32 observations on 11 variables.**
+
+| Index | Field | Detail |
+------- | ----- | ------ |
+| [, 1] | mpg | Miles/(US) gallon |
+| [, 2]  | cyl | Number of cylinders |
+| [, 3]	| disp | Displacement (cu.in.) |
+| [, 4]	| hp | Gross horsepower |
+| [, 5]	| drat | Rear axle ratio |
+| [, 6]	| wt | Weight (lb/1000) |
+| [, 7]	| qsec | 1/4 mile time |
+| [, 8]	| vs | V/S |
+| [, 9]	| am | Transmission (0 = automatic, 1 = manual) |
+| [,10]	| gear | Number of forward gears |
+| [,11]	| carb | Number of carburetors |
+
+---
+
+## Analysis - Main Code
+
+```r
+  formulaTextPoint <- reactive({
+    paste("mpg ~", "as.integer(", input$variable, ")")  })
+  
+  fit <- reactive({
+    lm(as.formula(formulaTextPoint()), data=mpgData)  })
+  ...
+  output$fit <- renderPrint({
+    summary(fit()) })
+  
+  output$mpgPlot <- renderPlot({
+    with(mpgData, {
+      plot(as.formula(formulaTextPoint()))
+      abline(fit(), col=2)
+    })  })
+```
